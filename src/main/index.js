@@ -1,9 +1,9 @@
 const configAwsCreds = require('./configAwsCreds')
-const decrementServiceCount = require('./decrementServiceCount')
+const updateServiceCount = require('./updateServiceCount')
 
 async function run() {
   await configAwsCreds()
-  await decrementServiceCount()
+  await updateServiceCount()
 }
 
 module.exports = run;

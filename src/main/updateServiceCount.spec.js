@@ -1,5 +1,5 @@
 const core = require('@actions/core');
-const run = require('./decrementServiceCount.js');
+const run = require('./updateServiceCount.js');
 
 jest.mock('@actions/core');
 

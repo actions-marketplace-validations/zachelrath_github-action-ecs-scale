@@ -1,5 +1,5 @@
 {
-  "name": "ecs-scaledown",
+  "name": "github-action-ecs-scale",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/trussworks/ecs-scaledown.git"
+    "url": "git+https://github.com/zachelrath/github-action-ecs-scale.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/trussworks/ecs-scaledown/issues"
+    "url": "https://github.com/zachelrath/github-action-ecs-scale/issues"
   },
-  "homepage": "https://github.com/trussworks/ecs-scaledown#readme",
+  "homepage": "https://github.com/zachelrath/github-action-ecs-scale#readme",
   "devDependencies": {
     "@vercel/ncc": "^0.29.1",
     "eslint": "^7.32.0",
