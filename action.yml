@@ -3,12 +3,10 @@ description: 'Update the desired number of tasks for an ECS service'
 inputs:
   service:
     description: 'The name of the ECS service.'
-    required: false
-    default: ''
+    required: true
   cluster:
     description: 'The name of the ECS cluster the service belongs to.'
-    required: false
-    default: ''
+    required: true
   desired-count:
     description: 'The desired number of tasks to run in the service.'
     required: true

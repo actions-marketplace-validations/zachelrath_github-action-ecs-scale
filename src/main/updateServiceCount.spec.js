@@ -5,7 +5,6 @@ jest.mock('@actions/core');
 
 const FAKE_SERVICE = 'fake-service'
 const FAKE_CLUSTER = 'fake-cluster'
-const FAKE_REPO_HASH = 'fake-hash'
 
 function mockGetInput(requestResponse) {
   return function (name, options) { // eslint-disable-line no-unused-vars
@@ -16,19 +15,30 @@ function mockGetInput(requestResponse) {
 const NO_INPUTS = {}
 const SERVICE_ONLY = {
   service: FAKE_SERVICE,
-  'repository-hash': ''
 }
 const CLUSTER_ONLY = {
   cluster: FAKE_CLUSTER,
-  'repository-hash': ''
 }
 
-const REPO_HASH_ONLY = {
-  'repository-hash': FAKE_REPO_HASH
+const NO_DESIRED_COUNT = {
+  service: FAKE_SERVICE,
+  cluster: FAKE_CLUSTER,
 }
+const INVALID_DESIRED_COUNT = {
+  service: FAKE_SERVICE,
+  cluster: FAKE_CLUSTER,
+  "desired-count": 'not a number',
+}
+const NEGATIVE_DESIRED_COUNT = {
+  service: FAKE_SERVICE,
+  cluster: FAKE_CLUSTER,
+  "desired-count": '-1',
+}
+
 const ALL_INPUTS = {
   service: FAKE_SERVICE,
-  cluster: FAKE_CLUSTER
+  cluster: FAKE_CLUSTER,
+  "desired-count": '1',
 }
 
 const mockUpdateService = jest.fn()
@@ -41,7 +51,7 @@ jest.mock('aws-sdk', () => {
   }
 })
 
-describe('Decrement Service Count', () => {
+describe('Update Service Count', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -50,7 +60,7 @@ describe('Decrement Service Count', () => {
       .mockReturnValueOnce({
         promise() {
           return Promise.resolve({ service: {
-            desiredCount: 0
+            desiredCount: 1
           }})
         }
       })
@@ -83,21 +93,39 @@ describe('Decrement Service Count', () => {
     expect(core.setFailed)
   })
 
-  test('when a valid cluster and service are provided, function runs successfully', async () => {
+  test('action fails when desired count is not set', async () => {
+    core.getInput = jest
+      .fn()
+      .mockImplementation(mockGetInput(NO_DESIRED_COUNT))
+    await run();
+
+    expect(core.setFailed)
+  })
+  test('action fails when desired count is not a number', async () => {
+    core.getInput = jest
+      .fn()
+      .mockImplementation(mockGetInput(INVALID_DESIRED_COUNT))
+    await run();
+
+    expect(core.setFailed)
+  })
+
+  test('action fails when desired count is less than zero', async () => {
+    core.getInput = jest
+      .fn()
+      .mockImplementation(mockGetInput(NEGATIVE_DESIRED_COUNT))
+    await run();
+
+    expect(core.setFailed)
+  })
+
+
+  test('when a valid cluster, service, and desired count are provided, function runs successfully', async () => {
     core.getInput = jest
       .fn()
       .mockImplementation(mockGetInput(ALL_INPUTS))
     await run();
     expect(mockUpdateService).toHaveBeenCalledTimes(1)
-    expect(mockUpdateService).toHaveBeenNthCalledWith(1, {'service': FAKE_SERVICE, 'cluster': FAKE_CLUSTER, 'desiredCount': 0})
-  })
-
-  test('when a valid repo hash is provided, function runs successfully', async () => {
-    core.getInput = jest
-      .fn()
-      .mockImplementation(mockGetInput(REPO_HASH_ONLY))
-      await run();
-      expect(mockUpdateService).toHaveBeenCalledTimes(1)
-      expect(mockUpdateService).toHaveBeenNthCalledWith(1, {'service': `gh-runner-${FAKE_REPO_HASH}`, 'cluster': `gh-runner-${FAKE_REPO_HASH}`, 'desiredCount': 0})
+    expect(mockUpdateService).toHaveBeenNthCalledWith(1, {'service': FAKE_SERVICE, 'cluster': FAKE_CLUSTER, 'desiredCount': 1})
   })
 });
