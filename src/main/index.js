@@ -1,8 +1,7 @@
-const configAwsCreds = require('./configAwsCreds')
+
 const updateServiceCount = require('./updateServiceCount')
 
 async function run() {
-  await configAwsCreds()
   await updateServiceCount()
 }
 
